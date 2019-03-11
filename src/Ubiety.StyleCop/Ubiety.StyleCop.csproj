@@ -5,6 +5,8 @@
         <PackageVersion>0.0.3</PackageVersion>
         <PackageDescription>Ubiety common StyleCop rules</PackageDescription>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <Authors>Dieter Lunn</Authors>
+        <PackageTags>StyleCop;rules;ubiety;shared</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
