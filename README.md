@@ -1,10 +1,10 @@
-# ![Logo](https://github.com/ubiety/Ubiety.StyleCop/raw/master/images/badge64.png) Ubiety.StyleCop
+# ![Logo](https://github.com/ubiety/Ubiety.StyleCop/raw/master/images/badge64.png) Ubiety.StyleCop ![Nuget](https://img.shields.io/nuget/v/Ubiety.StyleCop.svg?style=flat-square)
 > StyleCop rules and settings for shared projects
 
-| Branch  | Appveyor                                                                                                                                                                          |
-| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Master  | [![Build status](https://ci.appveyor.com/api/projects/status/d987cu46fasa23nx/branch/master?svg=true)](https://ci.appveyor.com/project/coder2000/ubiety-dns-core/branch/master)   |
-| Develop | [![Build status](https://ci.appveyor.com/api/projects/status/d987cu46fasa23nx/branch/develop?svg=true)](https://ci.appveyor.com/project/coder2000/ubiety-dns-core/branch/develop) |
+| Branch  | Appveyor                                                                                                       |
+| ------- | -------------------------------------------------------------------------------------------------------------- |
+| Master  | ![AppVeyor branch](https://img.shields.io/appveyor/ci/coder2000/ubiety-stylecop/master.svg?style=flat-square)  |
+| Develop | ![AppVeyor branch](https://img.shields.io/appveyor/ci/coder2000/ubiety-stylecop/develop.svg?style=flat-square) |
 
 
 ## Installing / Getting started
@@ -80,6 +80,8 @@ consideration, it is common to separate this section to its own file called
   - Ubiety Toolset: <https://github.com/ubiety/Ubiety.Toolset/>
   - Ubiety Xmpp: <https://github.com/ubiety/Ubiety.Xmpp.Core/>
   - Ubiety Dns: <https://github.com/ubiety/Ubiety.Dns.Core/>
+  - Ubiety Stringprep: <https://github.com/ubiety/Ubiety.Stringprep.Core/>
+  - Ubiety SCRAM: <https://github.com/ubiety/Ubiety.Scram.Core/>
 
 ## Sponsors
 
