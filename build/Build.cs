@@ -1,16 +1,10 @@
 using Nuke.Common;
-using Nuke.Common.Execution;
-using Nuke.Common.Git;
+using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
-using Nuke.Common.Utilities.Collections;
-using static Nuke.Common.IO.FileSystemTasks;
-using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
-[CheckBuildProjectConfigurations]
-[UnsetVisualStudioEnvironmentVariables]
 class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -19,60 +13,56 @@ class Build : NukeBuild
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
 
-    public static int Main () => Execute<Build>(x => x.Publish);
+    public static int Main () => Execute<Build>(x => x.Pack);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter] readonly string ApiKey;
-    [Parameter] readonly string Source = "https://api.nuget.org/v3/index.json";
-
     [Solution] readonly Solution Solution;
-    [GitRepository] readonly GitRepository GitRepository;
-
+    [Parameter] readonly string NuGetApiKey;
+    
     AbsolutePath SourceDirectory => RootDirectory / "src";
     AbsolutePath TestsDirectory => RootDirectory / "tests";
     AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
-
-    Target Clean => _ => _
+    
+    Target Clean => d => d
         .Before(Restore)
         .Executes(() =>
         {
-            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            EnsureCleanDirectory(ArtifactsDirectory);
+            SourceDirectory.GlobDirectories("**/bin", "**/obj").DeleteDirectories();
+            TestsDirectory.GlobDirectories("**/bin", "**/obj").DeleteDirectories();
+            ArtifactsDirectory.CreateOrCleanDirectory();
         });
 
-    Target Restore => _ => _
+    Target Restore => d => d
         .Executes(() =>
         {
             DotNetRestore(s => s
                 .SetProjectFile(Solution));
         });
-
-    Target Pack => _ => _
+    
+    Target Pack => d => d
+        .DependsOn(Restore)
         .Executes(() =>
         {
             DotNetPack(s => s
-                .SetOutputDirectory(ArtifactsDirectory)
-                .EnableNoBuild()
                 .SetProject(Solution)
-                .SetConfiguration(Configuration));
+                .SetConfiguration(Configuration)
+                .SetOutputDirectory(ArtifactsDirectory)
+                .EnableNoBuild());
         });
-
-    Target Publish => _ => _
-        .DependsOn(Clean, Restore, Pack)
-        .Requires(() => ApiKey)
+    
+    Target Publish => d => d
+        .DependsOn(Pack)
         .Executes(() =>
         {
             DotNetNuGetPush(s => s
-                .SetApiKey(ApiKey)
-                .SetSource(Source)
-                .CombineWith(
-                    ArtifactsDirectory.GlobFiles("*.nupkg").NotEmpty(), (cs, v) => 
-                        cs.SetTargetPath(v)),
+                    .SetSource("https://api.nuget.org/v3/index.json")
+                    .SetApiKey(NuGetApiKey)
+                    .EnableSkipDuplicate()
+                    .CombineWith(ArtifactsDirectory.GlobFiles("*.nupkg"),
+                        (x, v) => x.SetTargetPath(v)),
                 5,
                 true);
         });
-
 }
